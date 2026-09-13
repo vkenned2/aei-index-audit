@@ -138,5 +138,4 @@ Index is CC-BY-4.0 by Anthropic. BLS OEWS data is in the public domain.
 ## Disclosure
 
 This repository contains an independent analysis. It was not commissioned, funded, reviewed, or endorsed by Anthropic.
-The corresponding author has applied for employment at Anthropic; this is disclosed in the
-manuscript's competing interests statement.
+
