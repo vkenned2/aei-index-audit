@@ -1,0 +1,285 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How much of the AI divide is the map? — Vishal Kennedy</title>
+<meta name="description" content="A measurement audit of the Anthropic Economic Index: how much reported geographic variation in AI use survives changes of scale, map, weighting and sampling.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F3EF; --ink:#18211F; --soft:#5C6663; --rule:#D5D8CF;
+  --red:#A63D2F; --blue:#3A5A6B; --sand:#E6E7E0;
+  --serif:"Newsreader",Georgia,serif; --sans:"IBM Plex Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 19px/1.62 var(--serif);
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+.prose{max-width:64ch}
+h1,h2,h3{font-weight:400;letter-spacing:-.012em;margin:0}
+h1{font-size:clamp(34px,5.4vw,60px);line-height:1.06}
+h2{font-size:clamp(24px,3vw,33px);line-height:1.16;margin-bottom:.5em}
+h3{font-size:21px;line-height:1.3}
+p{margin:0 0 1.05em}
+a{color:var(--blue);text-underline-offset:3px;text-decoration-thickness:.06em}
+.num{font-family:var(--sans);font-variant-numeric:tabular-nums lining-nums}
+
+/* ---------- masthead ---------- */
+header{padding:62px 0 34px;border-bottom:1px solid var(--rule)}
+.byline{font-family:var(--sans);font-size:13.5px;color:var(--soft);margin-top:22px;line-height:1.7}
+.byline b{font-weight:500;color:var(--ink)}
+.thesis{font-size:clamp(20px,2.3vw,25px);line-height:1.42;font-weight:300;max-width:32ch;margin-top:20px}
+
+/* ---------- hero interactive ---------- */
+.hero{padding:40px 0 52px;border-bottom:1px solid var(--rule)}
+.maps{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--rule);background:#fff;
+  border-radius:2px;overflow:hidden;width:fit-content;max-width:100%}
+.maps button{font:500 13.5px/1 var(--sans);padding:11px 15px;border:0;
+  border-right:1px solid var(--rule);background:transparent;color:var(--soft);cursor:pointer;
+  transition:background .13s,color .13s}
+.maps button:last-child{border-right:0}
+.maps button:hover{background:var(--sand);color:var(--ink)}
+.maps button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.maps button:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+.readout{display:grid;grid-template-columns:auto auto 1fr;gap:0 46px;align-items:end;margin:34px 0 8px}
+.big{font-family:var(--sans);font-variant-numeric:tabular-nums;font-size:clamp(60px,10vw,104px);
+  font-weight:400;line-height:.88;letter-spacing:-.035em}
+.big.shift{color:var(--red)}
+.lbl{font-family:var(--sans);font-size:9.5px;fill:var(--soft)}
+.cap{font-family:var(--sans);font-size:12.5px;color:var(--soft);margin-top:9px}
+.delta{font-family:var(--sans);font-size:15px;color:var(--red);padding-bottom:4px;min-height:22px}
+.panes{display:grid;grid-template-columns:1.3fr 1fr;gap:26px;margin-top:26px}
+.pane{background:#fff;border:1px solid var(--rule);border-radius:2px;padding:8px}
+.hint{font-family:var(--sans);font-size:13.5px;color:var(--soft);margin-top:20px;max-width:62ch;line-height:1.6}
+
+/* ---------- findings ---------- */
+section{padding:56px 0;border-bottom:1px solid var(--rule)}
+.finding{display:grid;grid-template-columns:190px 1fr;gap:38px;padding:26px 0;
+  border-top:1px solid var(--rule)}
+.finding:first-of-type{border-top:0}
+.stat{font-family:var(--sans);font-variant-numeric:tabular-nums;font-size:40px;font-weight:400;
+  line-height:1;letter-spacing:-.028em;color:var(--red)}
+.stat small{display:block;font-size:12.5px;color:var(--soft);letter-spacing:0;margin-top:9px;
+  font-weight:400;line-height:1.45}
+.finding p{margin:0;font-size:18px}
+.finding p + p{margin-top:.85em}
+
+figure{margin:34px 0 0}
+figure img{width:100%;display:block;border:1px solid var(--rule);background:#fff;border-radius:2px}
+figcaption{font-family:var(--sans);font-size:13px;color:var(--soft);margin-top:11px;
+  line-height:1.55;max-width:78ch}
+
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px;
+  font-variant-numeric:tabular-nums;margin-top:20px}
+th{text-align:left;font-weight:500;padding:9px 14px 9px 0;border-bottom:1.5px solid var(--ink)}
+td{padding:9px 14px 9px 0;border-bottom:1px solid var(--rule)}
+td.n{text-align:right;padding-right:26px}
+tr:last-child td{border-bottom:0}
+.win{color:var(--red);font-weight:500}
+
+.errors li{margin-bottom:1.05em}
+.errors b{font-weight:500}
+ul{padding-left:1.1em}
+
+footer{padding:46px 0 66px;font-family:var(--sans);font-size:13.5px;color:var(--soft);line-height:1.75}
+footer a{color:var(--soft)}
+.links{display:flex;gap:26px;flex-wrap:wrap;margin-bottom:24px;font-size:15px}
+.links a{color:var(--ink)}
+
+@media(max-width:760px){
+  body{font-size:17.5px}
+  .panes{grid-template-columns:1fr}
+  .finding{grid-template-columns:1fr;gap:14px}
+  .readout{grid-template-columns:1fr 1fr;gap:20px}
+  .maps{width:100%}.maps button{flex:1 1 auto}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+
+<div class="wrap">
+<header>
+  <h1>How much of the AI divide<br>is the map?</h1>
+  <p class="thesis">A measurement audit of the Anthropic Economic Index across five waves and 51 US jurisdictions.</p>
+  <p class="byline"><b>Vishal Kennedy</b> and <b>Jeevanantham Sankaran</b><br>
+  Working paper, 2026. Independent analysis; not affiliated with, reviewed by, or endorsed by Anthropic.</p>
+</header>
+
+<div class="hero">
+  <div class="maps" id="maps" role="group" aria-label="Choose a geography"></div>
+  <div class="readout">
+    <div><div class="big num" id="gini">0.214</div><div class="cap">Gini of the usage index</div></div>
+    <div><div class="big num" id="k" style="font-size:clamp(38px,6vw,62px)">51</div><div class="cap">units</div></div>
+    <div class="delta" id="delta"></div>
+  </div>
+  <div class="panes">
+    <div class="pane"><svg id="bar" viewBox="0 0 400 420" style="width:100%;height:auto;display:block"></svg></div>
+    <div class="pane"><svg id="lz" viewBox="0 0 300 300" style="width:100%;height:auto;display:block"></svg></div>
+  </div>
+  <p class="hint" id="hint"></p>
+</div>
+
+<section>
+  <h2 class="prose">What the audit found</h2>
+
+  <div class="finding">
+    <div><div class="stat num">41–74%</div><small>of measured inequality destroyed by aggregating states into Census divisions</small></div>
+    <div><p>The range depends on weighting convention. Weighting by population, a claim about people, gives 41–48%. Weighting states equally, a claim about states, gives 66–74%. A reader who meets AI adoption reported by region is seeing at most 59% of the variation present at state level.</p>
+    <p>The Theil index decomposes exactly into between-group and within-group components, so this is arithmetic rather than approximation. Maximum residual across all waves and groupings: 2.9 × 10<sup>−16</sup>.</p></div>
+  </div>
+
+  <div class="finding">
+    <div><div class="stat num">95th</div><small>percentile: where the Census-division figure sits among 2,000 random contiguous nine-region maps</small></div>
+    <div><p>Five official US government geographies applied to identical data give Gini coefficients spanning 18.5–39.3% of their median. Two agencies inside the Department of Commerce publish different maps of the same country at eight and nine regions, and they disagree.</p>
+    <p>This is not evidence the map is arbitrary. Census divisions were built to group economically similar states, so they should separate high from low usage better than chance. The finding is the magnitude: a regional inequality figure computed this way is close to the largest such figure the geography admits.</p></div>
+  </div>
+
+  <div class="finding">
+    <div><div class="stat num">14%</div><small>of adjacent state rankings separable from sampling noise</small></div>
+    <div><p>Resampling the observed conversation counts, most neighbouring positions in the published ordering cannot be told apart. The index carries information in its broad strata, not its fine ordering.</p>
+    <p>The publisher already coarsens, distributing a four-tier classification with the data. Its middle boundary, the cut between the second and third quartiles of AI usage, holds in <span class="num">47.4%</span> of resamples. Only the top tier separates reliably.</p></div>
+  </div>
+
+  <div class="finding">
+    <div><div class="stat num">12.6%</div><small>of national usage share changing hands between two ordinary consecutive releases</small></div>
+    <div><p>No platform change, no policy change, no identifiable external event. This sets a floor: movement smaller than it cannot be interpreted. We are not aware of a published stability benchmark of this kind for any AI adoption index.</p>
+    <p>Scaled against sampling error, the median state moves 3.4 standard errors between consecutive waves and several exceed 40. Wave-to-wave variation is dominated by something other than sampling.</p></div>
+  </div>
+
+  <div class="finding">
+    <div><div class="stat num">27.7</div><small>effective independent observations from 49 contiguous jurisdictions</small></div>
+    <div><p>Usage is spatially clustered (Moran's <i>I</i> = 0.278, <i>p</i> = 0.003) in a way gross state product is not (<i>I</i> = 0.139, <i>p</i> = 0.11). AI use is more spatially structured than the economic variable most often invoked to explain it, and 43% of the apparent degrees of freedom are redundancy.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="prose">Why are the high states high?</h2>
+  <div class="prose">
+  <p>A shift-share decomposition separates a state's deviation from the national rate into <i>occupational composition</i>, having more people in occupations that use these systems, and <i>within-occupation intensity</i>, the same workers using them more.</p>
+  <p>The occupational layer classifies only <span class="num">27.4%</span> of usage in the median state, which restricts the decomposition to six jurisdictions holding 54% of US conversations. Within those six, the two highest-usage states are high for opposite reasons.</p>
+  </div>
+
+  <table>
+    <thead><tr><th>State</th><th class="n">Index</th><th class="n">Composition</th><th class="n">Intensity</th><th>Dominant</th></tr></thead>
+    <tbody>
+      <tr><td>California</td><td class="n">1.473</td><td class="n">−0.00004</td><td class="n win">+0.00071</td><td>intensity</td></tr>
+      <tr><td>Washington</td><td class="n">1.204</td><td class="n win">+0.00086</td><td class="n">−0.00057</td><td>composition</td></tr>
+      <tr><td>Virginia</td><td class="n">1.064</td><td class="n win">+0.00049</td><td class="n">−0.00040</td><td>composition</td></tr>
+      <tr><td>New York</td><td class="n">1.031</td><td class="n">−0.00012</td><td class="n win">+0.00016</td><td>intensity</td></tr>
+      <tr><td>Texas</td><td class="n">0.542</td><td class="n">−0.00004</td><td class="n win">−0.00061</td><td>intensity</td></tr>
+      <tr><td>Florida</td><td class="n">0.496</td><td class="n">−0.00017</td><td class="n win">−0.00055</td><td>intensity</td></tr>
+    </tbody>
+  </table>
+  <p class="hint">Components in classified conversations per worker, against BLS OEWS May 2024 employment (154.2M workers, 22 SOC major groups). Decomposition identity residual: exactly 0.</p>
+
+  <figure><img src="__FIG_SHIFT__" alt="Left: share of each state's usage classified to an occupation, most states below 50 percent. Right: composition and intensity components for the six qualifying states.">
+  <figcaption>Coverage constrains the decomposition. California's advantage is entirely within-occupation intensity; Washington's is occupational composition, partly offset by below-national intensity. Both rank adjacently in the published index.</figcaption></figure>
+</section>
+
+<section>
+  <h2 class="prose">Evidence</h2>
+  <figure><img src="__FIG_NULL__" alt="Five histograms of Gini across random contiguous nine-region partitions, with the observed Census division value marked near the upper tail in each wave.">
+  <figcaption>The observed Census-division value against 2,000 random contiguous nine-region partitions, one panel per wave. Percentiles: 81, 78, 95, 95, 95. The reporting map never falls near the median of its own null.</figcaption></figure>
+
+  <figure><img src="__FIG_SCALE__" alt="Stacked bars showing Theil index split into between-group and within-group components at each level of aggregation, for five waves.">
+  <figcaption>Theil decomposition across the geographic hierarchy. The lighter portion is variation invisible to a reader at that scale.</figcaption></figure>
+
+  <figure><img src="__FIG_CATER__" alt="Fifty-one states plotted with bootstrap confidence intervals, most of which overlap their neighbours.">
+  <figcaption>Usage index by jurisdiction with 95% intervals from 4,000 multinomial resamples (n = 222,372 conversations). Overlap between neighbours is the norm.</figcaption></figure>
+</section>
+
+<section>
+  <h2 class="prose">Four times this analysis was wrong</h2>
+  <div class="prose errors">
+  <p>A paper arguing that published statistics need better error discipline should hold itself to it. Each of these was caught by validation before release and each is documented in the manuscript.</p>
+  <ul>
+    <li><b>A rounding artifact read as denominator instability.</b> Recovered population shares appeared to drift 8.1% between consecutive months for South Dakota. The apparent movement is entirely accounted for by two-decimal rounding, which for the smallest states implies ±7% relative precision.</li>
+    <li><b>A silent null join.</b> Two non-contiguous states were missing from one geographic crosswalk. Grouped aggregation drops missing keys without warning, so one map was computed on 49 units and compared against others computed on 51.</li>
+    <li><b>A rescaling that invented usage.</b> The occupational layer leaves most usage unclassified. Dropping that residual and rescaling to 100% assigned Vermont's entire conversation volume to a single occupation, returning an index of 20.1 against a published 1.10. Every step of the arithmetic was correct; only a plausibility check exposed it.</li>
+    <li><b>An overstated claim about a data episode.</b> One wave-to-wave shift was initially described as uniquely anomalous. Scaled against sampling error it is the largest instance of a systematic pattern, not a category apart. The paper reports the systematic version.</li>
+  </ul>
+  </div>
+</section>
+
+<section style="border-bottom:0">
+  <h2 class="prose">What this does not claim</h2>
+  <div class="prose">
+  <p>None of this establishes that the Anthropic Economic Index is wrong. Every areal index has these properties; they follow from the construction, and the modifiable areal unit problem has been understood since 1934. The contribution is to size them for an index being cited in policy, and to ship tooling that re-runs the checks on each release.</p>
+  <p>It is worth saying plainly that this analysis was only possible because the publisher released the underlying data under an open licence. The properties measured here are almost certainly present in proprietary AI adoption statistics that cannot be examined at all.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="links">
+    <a href="#">Manuscript (PDF)</a>
+    <a href="https://github.com/vkenned2/aei-index-audit">Code and data</a>
+    <a href="https://huggingface.co/datasets/Anthropic/EconomicIndex">Source dataset</a>
+  </div>
+  Data: Anthropic Economic Index, CC-BY-4.0, releases 2025-09 through 2026-06, US jurisdictions only.
+  Employment: BLS Occupational Employment and Wage Statistics, May 2024.
+  Index recomputed on a fixed August 2025 working-age-population denominator.<br>
+  Correspondence: vkenned2@vols.utk.edu
+</footer>
+</div>
+
+<script>
+const D=__DATA__, MAPS=["State","Census region","Time zone","BEA region","Census division","Federal region"];
+const WAVE="2026-02";
+let cur="State";
+
+const mb=document.getElementById("maps");
+MAPS.forEach(m=>{const b=document.createElement("button");b.textContent=m;b.dataset.m=m;
+  b.setAttribute("aria-pressed",m===cur);b.onclick=()=>{cur=m;draw();};mb.appendChild(b);});
+
+const esc=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function bars(d){
+  const W=400,PADL=d.k>20?42:104,PADR=44,TOP=26,BOT=14;
+  const rowH=Math.max(6,(420-TOP-BOT)/d.k), bw=W-PADL-PADR;
+  const max=Math.max(...d.aui,1.05);
+  let o='<text x="0" y="12" class="lbl">Usage index (1.00 = proportional)</text>';
+  const x1=PADL+bw/max;
+  o+='<line x1="'+x1.toFixed(1)+'" y1="'+TOP+'" x2="'+x1.toFixed(1)+'" y2="'+(TOP+d.k*rowH)+'" stroke="#18211F" stroke-width="1" stroke-dasharray="2 3"/>';
+  d.units.forEach((u,i)=>{
+    const v=d.aui[i], y=TOP+i*rowH, h=Math.max(3,rowH-2.2);
+    o+='<rect x="'+PADL+'" y="'+y.toFixed(1)+'" width="'+(bw*v/max).toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+(v>=1?"#A63D2F":"#B9BDB4")+'"/>';
+    o+='<text x="'+(PADL-5)+'" y="'+(y+h*0.82).toFixed(1)+'" class="lbl" text-anchor="end" font-size="'+(d.k>20?7.2:10)+'">'+esc(u)+'</text>';
+    o+='<text x="'+(W-PADR+5)+'" y="'+(y+h*0.82).toFixed(1)+'" class="lbl" font-size="'+(d.k>20?7.2:10)+'">'+v.toFixed(2)+'</text>';
+  });
+  return o;
+}
+
+function lorenz(d,base){
+  const S=300,M=34,TOP=26,L=S-M-TOP;
+  const pt=(xs,ys)=>xs.map((x,i)=>(M+x*L).toFixed(1)+","+(S-M-ys[i]*L).toFixed(1)).join(" ");
+  let o='<text x="0" y="12" class="lbl">Usage against population</text>';
+  o+='<line x1="'+M+'" y1="'+(S-M)+'" x2="'+(M+L)+'" y2="'+(S-M-L)+'" stroke="#CFD3C9" stroke-width="1" stroke-dasharray="3 3"/>';
+  o+='<polyline points="'+pt(base.lx,base.ly)+'" fill="none" stroke="#B9BDB4" stroke-width="1.8"/>';
+  if(cur!=="State") o+='<polyline points="'+pt(d.lx,d.ly)+'" fill="none" stroke="#A63D2F" stroke-width="2.4"/>';
+  o+='<line x1="'+M+'" y1="'+(S-M)+'" x2="'+(M+L)+'" y2="'+(S-M)+'" stroke="#D5D8CF"/>';
+  o+='<line x1="'+M+'" y1="'+(S-M-L)+'" x2="'+M+'" y2="'+(S-M)+'" stroke="#D5D8CF"/>';
+  [0,0.5,1].forEach(f=>{
+    o+='<text x="'+(M+f*L).toFixed(0)+'" y="'+(S-M+13)+'" class="lbl" text-anchor="middle">'+(f*100)+'%</text>';
+    o+='<text x="'+(M-6)+'" y="'+(S-M-f*L+3).toFixed(0)+'" class="lbl" text-anchor="end">'+(f*100)+'%</text>';
+  });
+  o+='<text x="'+(M+L/2)+'" y="'+(S-4)+'" class="lbl" text-anchor="middle">share of working-age population</text>';
+  return o;
+}
+
+function draw(){
+  document.querySelectorAll("#maps button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===cur));
+  const d=D[WAVE][cur], base=D[WAVE]["State"];
+  const g=document.getElementById("gini");
+  g.classList.add("shift"); setTimeout(()=>g.classList.remove("shift"),420);
+  g.textContent=d.gini.toFixed(3);
+  document.getElementById("k").textContent=d.k;
+  document.getElementById("delta").textContent = cur==="State" ? "" :
+    Math.round(100*(base.gini-d.gini)/base.gini)+"% lower than the state-level figure, from the same conversations";
+  document.getElementById("hint").textContent = cur==="State"
+    ? "Fifty-one jurisdictions, the finest geography published. Choose a coarser map above. Nothing about the underlying conversations changes, only how they are grouped."
+    : cur+", "+d.k+" units. Measured inequality falls "+Math.round(100*(1-d.theil/base.theil))+"% on the Theil index against the state-level figure. Every option above is an official United States government geography, and they do not agree with one another.";
+  document.getElementById("bar").innerHTML=bars(d);
+  document.getElementById("lz").innerHTML=lorenz(d,base);
+}
+document.getElementById("gini").style.transition="color .42s";
+draw();
+</script></body></html>

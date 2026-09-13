@@ -1,0 +1,8 @@
+source,n_unstable,n_units,pct
+"Map only, within 2025-08",20.0,51,39.21568627450981
+"Map only, within 2025-11",25.0,51,49.01960784313726
+"Map only, within 2026-02",18.0,51,35.294117647058826
+"Map only, within 2026-04",19.0,51,37.254901960784316
+"Map only, within 2026-05",17.0,51,33.333333333333336
+"Wave only, mean over five maps",8.8,51,17.254901960784316
+"Full grid, five maps by five waves",34.0,51,66.66666666666667

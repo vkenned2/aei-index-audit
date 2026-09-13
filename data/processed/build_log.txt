@@ -1,0 +1,54 @@
+==========================================================================
+AEI US STATE PANEL -- BUILD LOG
+==========================================================================
+
+-- parsed --
+   2025-08                51 rows, 51 states
+   2025-11                51 rows, 51 states
+   2026-02                54 rows, 54 states
+   2026-06 (2 waves)     104 rows, 52 states
+
+D1 fixed denominator: working_age_pop from 2025-08, 51 states, total 218,180,312
+
+D2 balance: 5 waves; keeping 51 units present in all
+   dropped: ['GU', 'PR', 'VI']
+
+D3 platform by wave:
+   2025-08  free_pro       cadence=week
+   2025-11  free_pro       cadence=week
+   2026-02  free_pro_max   cadence=week
+   2026-04  unlabelled     cadence=month
+   2026-05  unlabelled     cadence=month
+   NOTE: universe changes between 2025-11 and 2026-02, which straddles
+         2026-01-01. Any treatment dated then is CONFOUNDED.
+
+==========================================================================
+VALIDATION
+==========================================================================
+[PASS] no duplicate state-wave rows
+[PASS] panel balanced
+         {'2025-08': 51, '2025-11': 51, '2026-02': 51, '2026-04': 51, '2026-05': 51}
+[PASS] usage_share sums to 100 in 2025-08
+         100.00000000
+[PASS] usage_share sums to 100 in 2025-11
+         100.00000000
+[PASS] usage_share sums to 100 in 2026-02
+         100.00000000
+[PASS] usage_share sums to 100 in 2026-04
+         100.00000000
+[PASS] usage_share sums to 100 in 2026-05
+         100.00000000
+[PASS] aui_fixed weighted mean is 1
+[PASS] AUI reproduces two independent ways
+         max |A-B| = 1.33e-15
+[PASS] recomputed AUI tracks published AUI
+         max |diff| = 0.024, median = 0.002. Non-zero is EXPECTED: fixed vs contemporaneous denominator (D1).
+[PASS] fixed vs implied population share agree
+         median rel. diff = 0.2%, max = 6.6%
+[PASS] geography crosswalks cover every unit
+[PASS] aggregation conserves usage_share
+
+[INFO] Poisson CV where counts exist: median 2.3%, worst 8.6%
+[INFO] waves without counts (rounding-interval model required): ['2026-04', '2026-05']
+
+All hard checks passed.
